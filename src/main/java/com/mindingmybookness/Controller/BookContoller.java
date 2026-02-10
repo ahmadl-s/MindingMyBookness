@@ -1,41 +1,59 @@
-package com.mindingmybookness;
+package com.mindingmybookness.Controller;
 
-import org.hibernate.grammars.hql.HqlParser;
-import org.springframework.http.HttpStatusCode;
+import com.mindingmybookness.Entity.Book;
+import com.mindingmybookness.Service.BookService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.handler.AbstractHandlerMapping;
+import org.springframework.scheduling.support.SimpleTriggerContext;
+import org.springframework.web.bind.annotation.*;
 
-import javax.print.attribute.standard.PresentationDirection;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/books")
-public class Contoller {
+@RequestMapping("/books")
+public class BookContoller {
 
-    private Service service;
+    private final BookService bookService;
+
+
+    @Autowired
+    public BookContoller(BookService bookService){
+        this.bookService = bookService;
+    }
 
     @GetMapping
-    public List<Book> showAllBooks(){
-        return service.getAllBooks();
+    public List<Book> showAllBooksController(){
+        return bookService.getAllBooks();
     }
 
-    @PostMapping("/booknamesearch")
-    public List<Book> showBookByName(String name){
-        return service.getBookByName(name);
+    @GetMapping("/booknamesearch")
+    public List<Book> showBookByNameController(@RequestParam String bookname){
+        return bookService.getBookByName(bookname);
     }
 
-    @PostMapping("/Authorbookssearch")
-    public List<Book> showBookByAuthor(String Author){
-        return service.getBookByAuthor(Author);
+    @GetMapping("/authorbookssearch")
+    public List<Book> showBookByAuthorController(@RequestParam String author){
+        return bookService.getBookByAuthor(author);
     }
 
-    @PostMapping("/Addbook")
-    public void addbook(Book book){
-        service.addbook(book);
+    @PostMapping("/addbook")
+    public ResponseEntity<String> addBookController(@RequestBody Book book){
+       return bookService.addBook(book);
+    }
+
+    @DeleteMapping("/deletebook")
+    public ResponseEntity<String> deleteBookController( @RequestParam String name){
+       return bookService.deleteBook(name);
+    }
+
+    @PutMapping ("/editbook/{id}")
+    public ResponseEntity<String> editBookController(
+            @PathVariable Integer id,
+            @RequestBody Book book
+
+            ){
+
+        return bookService.editBook(id, book);
     }
 
 

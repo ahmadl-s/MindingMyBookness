@@ -1,15 +1,26 @@
-package com.mindingmybookness;
+package com.mindingmybookness.Repository;
 
-import jakarta.persistence.criteria.CriteriaBuilder;
-import org.apache.el.stream.Optional;
+import com.mindingmybookness.Entity.Book;
+import com.mindingmybookness.Entity.Month;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.OptionalLong;
+import java.util.Optional;
 
+@Repository
 public interface BookRepository extends JpaRepository<Book, Integer> {
 
-    List<Book> findBookByBookname(String bookname);
+    List<Book> findBookByBooknameContains(String bookname);
 
-    List<Book> findBookByAuthor(String name);
+    List<Book> findBookByAuthorContains(String author);
+
+    void deleteBookByBookname(String bookname);
+
+
+    Book findBookById(Integer id);
+
+    Book findBookByBookname(String bookname);
+
+    Book findBookByMonthIs(Month month);
 }

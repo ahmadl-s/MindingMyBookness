@@ -6,8 +6,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class MindingMyBooknessApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(MindingMyBooknessApplication.class, args);
-	}
+    public static void main(String[] args) {
+
+        SpringApplication.run(MindingMyBooknessApplication.class, args);
+
+    }
 
 }
