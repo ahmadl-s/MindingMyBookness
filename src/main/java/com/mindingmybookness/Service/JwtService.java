@@ -2,6 +2,7 @@ package com.mindingmybookness.Service;
 
 import com.mindingmybookness.Entity.User;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
@@ -36,9 +37,20 @@ public class JwtService {
                 .compact();
     }
 
-    public void validateToken(String token){
+    public boolean validateToken(String token){
+
+        try{
+            extractclaim(token);
+        } catch (JwtException | IllegalArgumentException e) {
+            return false;
+        }
+        return true;
+    }
 
 
+
+    private String extractUsername(String token){
+        return extractclaim(token).getSubject();
     }
 
 
