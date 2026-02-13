@@ -49,7 +49,7 @@ public class JwtService {
 
 
 
-    private String extractUsername(String token){
+    public String extractUsername(String token){
         return extractclaim(token).getSubject();
     }
 
