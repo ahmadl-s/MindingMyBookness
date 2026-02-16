@@ -1,8 +1,10 @@
 package com.mindingmybookness.Service;
 
 import com.mindingmybookness.Entity.Login;
+import com.mindingmybookness.Entity.Role;
 import com.mindingmybookness.Entity.User;
 import com.mindingmybookness.Repository.UserRepository;
+import com.mindingmybookness.auth.SignupRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -40,45 +42,33 @@ public class UserService {
     }
 
 
-    public ResponseEntity<String> login(Login userLogin){
+    public void login(Login userLogin){
 
-        if (userRepository.existsByUsername(userLogin.getUsername())){
-            User user = userRepository.findUsersByUsername (userLogin.getUsername());
-
-            if (passwordEncoder.matches(userLogin.getPassword(), user.getPassword())){
-
-
-                return new ResponseEntity<>("Username and Password correct! Successfully logged in! \n token: " + jwtService.generateToken(user), HttpStatus.OK);
-
-            }else{
-               return new ResponseEntity<>("Correct Username, but Wrong Password", HttpStatus.UNAUTHORIZED);
-            }
-
-        }
-
-            return new ResponseEntity<>("User Not Found", HttpStatus.NOT_FOUND);
     }
 
 
-    public ResponseEntity<String> signup(User user){
+    public ResponseEntity<String> signup(SignupRequest signupRequest){
 
-        if (user.getEmail() == null || user.getUsername() == null || user.getPassword() == null){
+        if (signupRequest.getEmail() == null || signupRequest.getUsername() == null || signupRequest.getPassword() == null){
             return new ResponseEntity<>("Fill in appropriately", HttpStatus.BAD_REQUEST);
         }
 
-        if(userRepository.existsByUsername(user.getUsername()) || userRepository.existsByEmail(user.getEmail())){
-            return new ResponseEntity<>("Username already exists", HttpStatus.BAD_REQUEST);
+        if(userRepository.existsByUsername(signupRequest.getUsername()) || userRepository.existsByEmail(signupRequest.getEmail())){
+            return new ResponseEntity<>("Username or email already exists", HttpStatus.CONFLICT);
         }
 
-        if(userRepository.existsByEmail(user.getEmail())){
-            return new ResponseEntity<>("Email already exists", HttpStatus.BAD_REQUEST);
-        }
 
-       String encodedPassword = passwordEncoder.encode(user.getPassword());
-        user.setPassword(encodedPassword);
+       String encodedPassword = passwordEncoder.encode(signupRequest.getPassword());
+        User userToStore = User.builder()
+                .username(signupRequest.getUsername())
+                .email(signupRequest.getEmail())
+                .password(encodedPassword)
+                .role(Role.USER)
+                .build();
 
-        userRepository.save(user);
-        return new ResponseEntity<>("User saved Succesfully", HttpStatus.OK);
+
+        userRepository.save(userToStore);
+        return new ResponseEntity<>("User saved Succesfully", HttpStatus.CREATED);
 
     }
 

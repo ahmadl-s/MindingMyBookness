@@ -1,7 +1,6 @@
 package com.mindingmybookness.Repository;
 
 import com.mindingmybookness.Entity.User;
-import org.springframework.data.domain.Limit;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -17,5 +16,5 @@ public interface UserRepository extends JpaRepository<User, String> {
 
     boolean existsByEmail (String email);
 
-    User findUsersByUsername(String username);
+    Optional<User> findUsersByUsername(String username);
 }

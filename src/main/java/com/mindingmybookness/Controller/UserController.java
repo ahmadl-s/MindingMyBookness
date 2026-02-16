@@ -4,6 +4,7 @@ import com.mindingmybookness.Entity.Login;
 import com.mindingmybookness.Entity.User;
 import com.mindingmybookness.Repository.UserRepository;
 import com.mindingmybookness.Service.UserService;
+import com.mindingmybookness.auth.SignupRequest;
 import org.hibernate.dialect.function.StringFunction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -38,8 +39,8 @@ public class UserController {
 
 
     @PostMapping("/signup")
-    public ResponseEntity<String> signupController( @RequestBody User user){
-        return userService.signup(user);
+    public ResponseEntity<String> signupController(@RequestBody SignupRequest signupRequest){
+        return userService.signup(signupRequest);
     }
 
     @PostMapping("/login")

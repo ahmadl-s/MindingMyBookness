@@ -8,6 +8,7 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.hibernate.internal.util.StringHelper;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.nio.charset.StandardCharsets;
@@ -37,15 +38,30 @@ public class JwtService {
                 .compact();
     }
 
-    public boolean validateToken(String token){
+    public boolean validateToken(String token, UserDetails userDetails){
 
         try{
-            extractclaim(token);
+            extractclaim(token); //checks both the signature and expiry
+            return extractUsername(token).equals(userDetails.getUsername());
+
         } catch (JwtException | IllegalArgumentException e) {
             return false;
         }
-        return true;
+
     }
+
+    //public boolean validateToken(String token, UserDetails userDetails) {
+    //    try {
+    //        final String username = extractUsername(token);
+    //        return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
+    //    } catch (JwtException | IllegalArgumentException e) {
+    //        return false;
+    //    }
+    //}
+    //
+    //private boolean isTokenExpired(String token) {
+    //    return extractclaim(token).getExpiration().before(new Date());
+    //}
 
 
 

@@ -19,7 +19,7 @@ public class AppConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http){
         http
                 .csrf(csrf -> csrf.disable())
-                .authorizeHttpRequests(auth -> auth.requestMatchers("/users/**", "/books/**").permitAll()
+                .authorizeHttpRequests(auth -> auth.requestMatchers("/users/login","/users/signup", "/books/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session ->

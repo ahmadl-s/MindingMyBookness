@@ -13,12 +13,15 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.nio.FloatBuffer;
+import java.util.List;
 
 @Component
 public class JwtFilter extends OncePerRequestFilter {
@@ -50,28 +53,29 @@ public class JwtFilter extends OncePerRequestFilter {
         }
 
         String token = header.substring(7);
-        Boolean tokenValidity = jwtService.validateToken(token); //main 1  (token validation)
 
-        if(tokenValidity){
-            String username = jwtService.extractUsername(token); // main 2 (Getting user to see if user exists)
+        String username = jwtService.extractUsername(token);
 
-            if(username != null && SecurityContextHolder.getContext().getAuthentication() == null){
-                UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 
-                UsernamePasswordAuthenticationToken authenticatedObject = new UsernamePasswordAuthenticationToken(
+        if(username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+
+            UserDetails userDetails = userDetailsService.loadUserByUsername(username); // main 2 (Getting user to see if user exists)
+
+            if (jwtService.validateToken(token, userDetails)) { //main 1  (token validation)
+                UsernamePasswordAuthenticationToken authenticatedObject = new UsernamePasswordAuthenticationToken( //Main 3 (putting user in an object to give SCH)
                         userDetails,
                         null,
                         userDetails.getAuthorities()
-
                 );
 
                 authenticatedObject.setDetails(
                         new WebAuthenticationDetailsSource().buildDetails(request)
                 );
 
-                SecurityContextHolder.getContext().setAuthentication(authenticatedObject);
+                SecurityContextHolder.getContext().setAuthentication(authenticatedObject); //Giving SCH
 
             }
+
 
         }
 
@@ -80,3 +84,29 @@ public class JwtFilter extends OncePerRequestFilter {
 };
 
 
+//Boolean tokenValidity = jwtService.validateToken(token);
+//
+//        if(tokenValidity){
+//            String username = jwtService.extractUsername(token); // main 2 (Getting user to see if user exists)
+//
+//            if(username != null && SecurityContextHolder.getContext().getAuthentication() == null){
+//                UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+//
+//                UsernamePasswordAuthenticationToken authenticatedObject = new UsernamePasswordAuthenticationToken(
+//                        userDetails,
+//                        null,
+//                        userDetails.getAuthorities()
+//
+//                );
+//
+//                authenticatedObject.setDetails(
+//                        new WebAuthenticationDetailsSource().buildDetails(request)
+//                );
+//
+//                SecurityContextHolder.getContext().setAuthentication(authenticatedObject);
+//
+//            }
+//
+//        }
+//
+//        filterChain.doFilter(request, response);
