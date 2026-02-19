@@ -1,4 +1,4 @@
-package com.mindingmybookness.Entity;
+package com.mindingmybookness.auth;
 
 
 import lombok.AllArgsConstructor;
@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 
-public class Login {
+public class LoginRequest {
 
     private String username;
 
