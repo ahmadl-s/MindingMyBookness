@@ -14,7 +14,7 @@ import java.net.URL;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-
+@Builder
 
 @Entity
 public class Book {

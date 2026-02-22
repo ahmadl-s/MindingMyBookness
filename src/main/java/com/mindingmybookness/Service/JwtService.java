@@ -2,18 +2,15 @@ package com.mindingmybookness.Service;
 
 import com.mindingmybookness.Entity.User;
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
-import org.hibernate.internal.util.StringHelper;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
-import java.nio.charset.StandardCharsets;
 import java.security.Key;
-import java.util.Base64;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -22,7 +19,8 @@ import java.util.Map;
 @Service
 public class JwtService {
 
-    String SECRET_KEY = "cml2ZXJleGFjdGx5Y29uc2lkZXJpbXBvcnRhbmNlc3VnYXJsYXN0d2hhdHdlaWdoZmw=";
+    @Value("${security.jwt.secret-key}")
+    String SECRET_KEY ;
 
     public String generateToken(User user){
 
@@ -40,29 +38,25 @@ public class JwtService {
 
     public boolean validateToken(String token, UserDetails userDetails){
 
-        try{
-            extractclaim(token); //checks both the signature and expiry
-            return extractUsername(token).equals(userDetails.getUsername());
+        return extractUsername(token).equals(userDetails.getUsername()) && !isTokenExpired(token);
 
-        } catch (JwtException | IllegalArgumentException e) {
-            return false;
-        }
+
+
+        //The below is also correct
+//        try{
+//            extractclaim(token); //checks both the signature and expiry
+//            return extractUsername(token).equals(userDetails.getUsername()) && isTokenExpired(token);
+//
+//        } catch (JwtException | IllegalArgumentException e) {
+//            return false;
+//        }
 
     }
 
-    //public boolean validateToken(String token, UserDetails userDetails) {
-    //    try {
-    //        final String username = extractUsername(token);
-    //        return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
-    //    } catch (JwtException | IllegalArgumentException e) {
-    //        return false;
-    //    }
-    //}
-    //
-    //private boolean isTokenExpired(String token) {
-    //    return extractclaim(token).getExpiration().before(new Date());
-    //}
-
+    private boolean isTokenExpired(String token) {
+        Date expirationDate = extractclaim(token).getExpiration();
+        return expirationDate.before(new Date());
+    }
 
 
     public String extractUsername(String token){

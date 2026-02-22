@@ -1,4 +1,4 @@
-package com.mindingmybookness.auth;
+package com.mindingmybookness.DTOs;
 
 
 import lombok.AllArgsConstructor;

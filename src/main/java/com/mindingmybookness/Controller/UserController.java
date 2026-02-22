@@ -1,9 +1,9 @@
 package com.mindingmybookness.Controller;
 
-import com.mindingmybookness.auth.LoginRequest;
+import com.mindingmybookness.DTOs.LoginRequest;
 import com.mindingmybookness.Entity.User;
 import com.mindingmybookness.Service.UserService;
-import com.mindingmybookness.auth.SignupRequest;
+import com.mindingmybookness.DTOs.SignupRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -28,7 +28,7 @@ public class UserController {
     }
 
 
-    @GetMapping("/searchUsername/{username}")
+    @GetMapping("searchUsername/{username}")
     public List<User> searchUserController(@PathVariable String username){
         return userService.searchUserByName(username);
     }

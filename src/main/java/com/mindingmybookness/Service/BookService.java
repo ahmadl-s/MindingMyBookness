@@ -1,6 +1,8 @@
 package com.mindingmybookness.Service;
 
 
+import com.mindingmybookness.DTOs.BookRequest;
+import com.mindingmybookness.Entity.Month;
 import com.mindingmybookness.Repository.BookRepository;
 import com.mindingmybookness.Entity.Book;
 import jakarta.transaction.Transactional;
@@ -9,9 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.rmi.AlreadyBoundException;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class BookService {
@@ -40,13 +40,19 @@ public class BookService {
     }
 
     //add a book
-    public ResponseEntity<String> addBook(Book book) {
+    public ResponseEntity<String> addBook(BookRequest bookRequest) {
 
-        Book sameMonthBook = bookRepository.findBookByMonthIs(book.getMonth());
+        Book sameMonthBook = bookRepository.findBookByMonthIs(bookRequest.getMonth());
 
         if (sameMonthBook != null) {
             return new ResponseEntity<>("A book has occupied chosen month", HttpStatus.CONFLICT);
         } else {
+            Book book = Book.builder()
+                    .bookname(bookRequest.getBookname())
+                    .author(bookRequest.getAuthor())
+                    .description(bookRequest.getDescription())
+                    .month(bookRequest.getMonth())
+                    .build();
             bookRepository.save(book);
             return new ResponseEntity<>("Book saved", HttpStatus.OK);
         }
@@ -58,23 +64,20 @@ public class BookService {
         return new ResponseEntity<>("Book deleted", HttpStatus.OK);
     }
 
-    public ResponseEntity<String> editBook( Integer id, Book updateBook) {
-        Book bookToEdit = bookRepository.findBookById(id);
 
-        if (bookToEdit != null) {
+    @Transactional // Hibernate will now "watch" for changes
+    public ResponseEntity<String> editBook(Integer id, BookRequest bookRequest) {
+        Book bookToEdit = bookRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Book not found"));
 
-            bookToEdit.setId(bookToEdit.getId());
-            bookToEdit.setBookname(updateBook.getBookname());
-            bookToEdit.setDescription(updateBook.getDescription());
-            bookToEdit.setAuthor(updateBook.getAuthor());
+        // Just update the fields. No .save() needed!
+        bookToEdit.setBookname(bookRequest.getBookname());
+        bookToEdit.setDescription(bookRequest.getDescription());
+        bookToEdit.setAuthor(bookRequest.getAuthor());
+        bookToEdit.setMonth(bookRequest.getMonth());
 
-            bookRepository.save(bookToEdit);
-
-            return ResponseEntity.ok("Book has been updated");
-        } else {
-            return ResponseEntity.ok("Book dosent exists");
-        }
-    }
+        return ResponseEntity.ok("Book has been updated");
+    } // At this bracket, the database is automatically updated bcos of @Transactonal
 
 }
 
