@@ -15,8 +15,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.nio.FloatBuffer;
-import java.util.List;
 
 @Component
 public class JwtFilter extends OncePerRequestFilter {
@@ -40,17 +38,13 @@ public class JwtFilter extends OncePerRequestFilter {
 
         String header = request.getHeader("Authorization");
 
-
-
         if (header == null || !header.startsWith("Bearer ")){
             filterChain.doFilter(request, response);
             return;
         }
 
         String token = header.substring(7);
-
         String username = jwtService.extractUsername(token);
-
 
         if(username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 
@@ -71,7 +65,6 @@ public class JwtFilter extends OncePerRequestFilter {
 
             }
 
-
         }
 
         filterChain.doFilter(request, response);
@@ -79,7 +72,7 @@ public class JwtFilter extends OncePerRequestFilter {
 };
 
 
-//Boolean tokenValidity = jwtService.validateToken(token);
+//Boolean tokenValidity = jwtService.validateToken(token, userDetails);
 //
 //        if(tokenValidity){
 //            String username = jwtService.extractUsername(token); // main 2 (Getting user to see if user exists)

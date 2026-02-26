@@ -1,6 +1,7 @@
 package com.mindingmybookness.Controller;
 
 import com.mindingmybookness.DTOs.LoginRequest;
+import com.mindingmybookness.DTOs.RefreshToken;
 import com.mindingmybookness.Entity.User;
 import com.mindingmybookness.Service.UserService;
 import com.mindingmybookness.DTOs.SignupRequest;
@@ -10,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RestController
+@RestController //Tells spring that this should be JSON, while @Controller is for HTML
 @RequestMapping("/users")
 public class UserController {
 
@@ -43,6 +44,11 @@ public class UserController {
     public ResponseEntity<?> loginController(@RequestBody LoginRequest loginRequest){
         return  userService.login(loginRequest);
 
+    }
+
+    @PostMapping("/refresh")
+    public ResponseEntity<?> refresh(@RequestBody RefreshToken refreshToken){
+        return userService.refresh(refreshToken);
     }
 
 }
