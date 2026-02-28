@@ -7,6 +7,7 @@ import com.mindingmybookness.Service.UserService;
 import com.mindingmybookness.DTOs.SignupRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -29,6 +30,7 @@ public class UserController {
     }
 
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("searchUsername/{username}")
     public List<User> searchUserController(@PathVariable String username){
         return userService.searchUserByName(username);

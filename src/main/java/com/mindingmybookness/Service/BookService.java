@@ -2,6 +2,7 @@ package com.mindingmybookness.Service;
 
 
 import com.mindingmybookness.DTOs.BookRequest;
+import com.mindingmybookness.DTOs.EditBookRequest;
 import com.mindingmybookness.Entity.Month;
 import com.mindingmybookness.Repository.BookRepository;
 import com.mindingmybookness.Entity.Book;
@@ -66,18 +67,33 @@ public class BookService {
 
 
     @Transactional // Hibernate will now "watch" for changes
-    public ResponseEntity<String> editBook(Integer id, BookRequest bookRequest) {
+    public ResponseEntity<String> editBook(int id, EditBookRequest editBookRequest) {
         Book bookToEdit = bookRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Book not found"));
 
         // Just update the fields. No .save() needed!
-        bookToEdit.setBookname(bookRequest.getBookname());
-        bookToEdit.setDescription(bookRequest.getDescription());
-        bookToEdit.setAuthor(bookRequest.getAuthor());
-        bookToEdit.setMonth(bookRequest.getMonth());
+        bookToEdit.setBookname(editBookRequest.getBookname());
+        bookToEdit.setDescription(editBookRequest.getDescription());
+        bookToEdit.setAuthor(editBookRequest.getAuthor());
+
 
         return ResponseEntity.ok("Book has been updated");
     } // At this bracket, the database is automatically updated bcos of @Transactonal
+
+
+    @Transactional
+    public ResponseEntity<String> editBookMonth(int id, Month newMonth){
+
+        Book bookIdExist = bookRepository.findBookById(id);
+        Book bookMonthExist = bookRepository.findBookByMonthIs(newMonth);
+
+        if(bookIdExist != null && bookMonthExist ==null ){
+            bookIdExist.setMonth(newMonth);
+            return ResponseEntity.ok("Book month has been updated");
+        }
+
+        return new ResponseEntity<>("book id doesnt exist or month already taken", HttpStatus.BAD_REQUEST);
+    }
 
 }
 

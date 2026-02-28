@@ -1,7 +1,9 @@
 package com.mindingmybookness.Controller;
 
 import com.mindingmybookness.DTOs.BookRequest;
+import com.mindingmybookness.DTOs.EditBookRequest;
 import com.mindingmybookness.Entity.Book;
+import com.mindingmybookness.Entity.Month;
 import com.mindingmybookness.Service.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -55,11 +57,20 @@ public class BookContoller {
     @PutMapping ("/editbook/{id}")
     public ResponseEntity<String> editBookController(
             @PathVariable Integer id,
-            @RequestBody BookRequest bookRequest
+            @RequestBody EditBookRequest editBookRequest
 
             ){
 
-        return bookService.editBook(id, bookRequest);
+        return bookService.editBook(id, editBookRequest);
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @PutMapping ("/editBookMonth/{id}")
+    public ResponseEntity<String> editBookMonthController(
+         @PathVariable Integer id,
+         @RequestParam Month newMonth
+    ){
+       return bookService.editBookMonth(id, newMonth);
     }
 
 
