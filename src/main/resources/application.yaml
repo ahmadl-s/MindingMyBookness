@@ -3,8 +3,8 @@ spring:
     name: MindingMyBookness
   datasource:
     url: jdbc:postgresql://localhost:5432/mindingmybookness_database
-    username: ahmad
-    password: ilovejava
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
 
   jpa:
     hibernate:
@@ -16,4 +16,4 @@ server:
 
 security:
   jwt:
-    secret-key: ${JWT_SECRET_KEY:cml2ZXJleGFjdGx5Y29uc2lkZXJpbXBvcnRhbmNlc3VnYXJsYXN0d2hhdHdlaWdoZmw==}
+    secret-key: ${JWT_SECRET_KEY}
