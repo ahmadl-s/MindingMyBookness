@@ -3,6 +3,7 @@ package com.mindingmybookness.Config;
 import com.mindingmybookness.Entity.Role;
 import com.mindingmybookness.Entity.User;
 import com.mindingmybookness.Repository.UserRepository;
+import io.github.cdimascio.dotenv.Dotenv;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
@@ -52,8 +53,10 @@ public class AppConfig {
         return args -> {
             if (userRepository.findUsersByRole(Role.ADMIN).isEmpty()) {
                 User admin = new User();
+                Dotenv dotenv = Dotenv.load(); //laod the .env file
+                String ADMIN_PASSWORD = dotenv.get("ADMIN_PASSWORD"); //get the password from the .env file
                 admin.setUsername("admin");
-                admin.setPassword(passwordEncoder.encode("admin123")); //temporary//use EV
+                admin.setPassword(passwordEncoder.encode(ADMIN_PASSWORD)); //temporary//use EV : //in na manta psw, psw in admin daya biyu uku
                 admin.setEmail("admin@MMB");
                 admin.setRole(Role.ADMIN);
                 userRepository.save(admin);
